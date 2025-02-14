@@ -1,10 +1,10 @@
 use log::{info, error};
 
-mod modules {
+mod cli {
     pub mod cli;
 }
 
-use modules::{
+use cli::{
     cli::build_cli,
 };
 
@@ -15,7 +15,6 @@ mod db {
 use db::{
     database::{init_sbom_db, init_commitment_db, insert_sbom, insert_commitment, get_all_sboms, get_all_commitments, Sbom, Commitment},
 };
-
 
 mod commands {
     pub mod get_commitment;
