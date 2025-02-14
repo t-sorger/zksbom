@@ -15,6 +15,27 @@ pub fn build_cli() -> Command {
                         .value_name("FILE")
                         .help("Path to the SBOM file")
                         .required(true),
+                )
+                .arg(
+                    Arg::new("vendor")
+                        .long("vendor")
+                        .value_name("VENDOR")
+                        .help("Name of the vendor")
+                        .required(true),
+                )
+                .arg(
+                    Arg::new("product")
+                        .long("product")
+                        .value_name("PRODUCT")
+                        .help("Name of the product")
+                        .required(true),
+                )
+                .arg(
+                    Arg::new("version")
+                        .long("version")
+                        .value_name("VERSION")
+                        .help("Version of the product")
+                        .required(true),
                 ),
         )
         .subcommand(

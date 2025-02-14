@@ -9,11 +9,13 @@ use cli::{
 };
 
 mod db {
-    pub mod database;
+    pub mod db_commitment;
+    pub mod db_sbom;
 }
 
 use db::{
-    database::{init_sbom_db, init_commitment_db, insert_sbom, insert_commitment, get_all_sboms, get_all_commitments, Sbom, Commitment},
+    db_commitment::{init_commitment_db, insert_commitment, get_all_commitments, Commitment},
+    db_sbom::{init_sbom_db, insert_sbom, get_all_sboms, Sbom},
 };
 
 mod commands {
@@ -54,7 +56,10 @@ fn main() {
     match matches.subcommand() {
         Some(("upload", sub_matches)) => {
             let sbom_path = sub_matches.get_one::<String>("sbom").unwrap();
-            upload_sbom(sbom_path);
+            let vendor = sub_matches.get_one::<String>("vendor").unwrap();
+            let product = sub_matches.get_one::<String>("product").unwrap();
+            let version = sub_matches.get_one::<String>("version").unwrap();
+            upload_sbom(sbom_path, vendor, product, version);
         }
         Some(("get-commitment", sub_matches)) => {
             let product = sub_matches.get_one::<String>("product").unwrap();
