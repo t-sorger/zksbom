@@ -41,23 +41,6 @@ pub fn insert_commitment(conn: &Connection, commitment: &Commitment) -> Result<(
     Ok(())
 }
 
-/// Query all Commitment entries from the Commitment database
-pub fn get_all_commitments(conn: &Connection) -> Result<Vec<Commitment>> {
-    let mut stmt = conn.prepare("SELECT vendor, product, version, commitment FROM commitment")?;
-    let commitments = stmt.query_map([], |row| {
-        Ok(Commitment {
-            vendor: row.get(0)?,
-            product: row.get(1)?,
-            version: row.get(2)?,
-            commitment: row.get(3)?,
-        })
-    })?
-    .collect::<Result<Vec<_>>>()?;
-
-    Ok(commitments)
-}
-
-
 pub fn get_specific_commitment(conn: &Connection, vendor: &str, product: &str, version: &str) -> Result<Commitment> {
     let mut stmt = conn.prepare("SELECT vendor, product, version, commitment FROM commitment WHERE vendor = ?1 AND product = ?2 AND version = ?3")?;
     let commitment = stmt.query_map(&[&vendor, &product, &version], |row| {

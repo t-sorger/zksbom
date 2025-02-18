@@ -1,7 +1,5 @@
-use log::warn;
 use rusqlite::{Connection, Result};
 use crate::config::config::load_config;
-use std::env;
 
 /// Represents an SBOM entry
 #[derive(Debug)]
@@ -41,23 +39,6 @@ pub fn insert_sbom(conn: &Connection, sbom: &Sbom) -> Result<()> {
         &[&sbom.sbom, &sbom.vendor, &sbom.product, &sbom.version],
     )?;
     Ok(())
-}
-
-
-/// Query all SBOM entries from the SBOM database
-pub fn get_all_sboms(conn: &Connection) -> Result<Vec<Sbom>> {
-    let mut stmt = conn.prepare("SELECT sbom, vendor, product, version FROM sbom")?;
-    let sboms = stmt.query_map([], |row| {
-        Ok(Sbom {
-            sbom: row.get(0)?,
-            vendor: row.get(1)?,
-            product: row.get(2)?,
-            version: row.get(3)?,
-        })
-    })?
-    .collect::<Result<Vec<_>>>()?;
-
-    Ok(sboms)
 }
 
 pub fn get_specific_sbom(conn: &Connection, vendor: &str, product: &str, version: &str) -> Result<Sbom> {

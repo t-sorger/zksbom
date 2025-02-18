@@ -52,10 +52,6 @@ fn main() {
     init_sbom_database().unwrap();
     init_commitment_database().unwrap();
 
-    // Insert test data
-    // i = test_db_inserts();
-    // info!("Test db inserts: {:?}", i);
-
     // Build the CLI parser
     let matches = build_cli().get_matches();
 
