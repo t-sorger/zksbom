@@ -1,0 +1,17 @@
+[sbom_database]
+path = "./db/sbom.db"
+host = ""
+port = 0
+user = ""
+password = ""
+
+[commitment_database]
+path = "./db/commitment.db"
+host = ""
+port = 0
+user = ""
+password = ""
+
+[app]
+debug = true
+log_level = "info"

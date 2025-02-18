@@ -1,4 +1,7 @@
-use rusqlite::{Connection, Result, params};
+use log::warn;
+use rusqlite::{Connection, Result};
+use crate::config::config::load_config;
+use std::env;
 
 /// Represents an SBOM entry
 #[derive(Debug)]
@@ -10,7 +13,10 @@ pub struct Sbom {
 }
 
 /// Initialize the SBOM database
-pub fn init_sbom_db(db_path: &str) -> Result<Connection> {
+pub fn init_sbom_db() -> Result<Connection> {
+    let config = load_config("./src/config/config.toml").unwrap();
+    let db_path = config.sbom_database.path;
+
     let conn = Connection::open(db_path)?;
 
     // Create the SBOM table if it doesn't exist
@@ -54,7 +60,28 @@ pub fn get_all_sboms(conn: &Connection) -> Result<Vec<Sbom>> {
     Ok(sboms)
 }
 
-fn create_connection() {
-    let sbom_db_path = "./db/sbom.db";
-    let sbom_conn = init_sbom_db(sbom_db_path);
+pub fn get_specific_sbom(conn: &Connection, vendor: &str, product: &str, version: &str) -> Result<Sbom> {
+    let mut stmt = conn.prepare("SELECT sbom, vendor, product, version FROM sbom WHERE vendor = ?1 AND product = ?2 AND version = ?3")?;
+    let sbom = stmt.query_map(&[&vendor, &product, &version], |row| {
+        Ok(Sbom {
+            sbom: row.get(0)?,
+            vendor: row.get(1)?,
+            product: row.get(2)?,
+            version: row.get(3)?,
+        })
+    })?
+    .next()
+    .unwrap()
+    .unwrap();
+
+    Ok(sbom)
+}
+
+pub fn get_sbom_db_connection() -> Connection {
+    return init_sbom_db().unwrap();
+}
+
+pub fn init_sbom_database() -> Result<(), Box<dyn std::error::Error>> {
+    let _sbom_conn = init_sbom_db();
+    Ok(())
 }

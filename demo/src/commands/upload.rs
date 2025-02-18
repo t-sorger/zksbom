@@ -4,10 +4,12 @@ use std::io::Read;
 use std::path::Path;
 
 use crate::db::db_sbom::{
-    init_sbom_db,
     insert_sbom,
-    Sbom
+    Sbom,
+    get_sbom_db_connection
 };
+
+use crate::zkp::generate_commitment::generate_commitment;
 
 // Function for the "upload" command
 pub fn upload_sbom(sbom_path: &str, vendor: &str, product: &str,version: &str) { //upload_sbom(sbom_path, vendor, product, version)
@@ -18,32 +20,29 @@ pub fn upload_sbom(sbom_path: &str, vendor: &str, product: &str,version: &str) {
         match extension.to_str().unwrap() {
             "json" => {
                 if let Ok(contents) = read_file(sbom_path) {
-                    debug!("JSON file content:\n{}", contents);
-                    info!("JSON file content read successfully.");
-                    // You can now parse the JSON content using a crate like `serde_json`
+                        debug!("JSON file content:\n{}", contents);
+                        info!("JSON file content read successfully.");
+                        // You can now parse the JSON content using a crate like `serde_json`
 
-                    // Inserting the SBOM into the database
-                    let sbom = Sbom {
-                        sbom: contents.to_string(),
-                        vendor: vendor.to_string(),
-                        product: product.to_string(),
-                        version: version.to_string(),
-                    };
+                        // Inserting the SBOM into the database
+                        let sbom = Sbom {
+                            sbom: contents.to_string(),
+                            vendor: vendor.to_string(),
+                            product: product.to_string(),
+                            version: version.to_string(),
+                        };
 
-                    debug!("Inserting SBOM into the database: {:?}", sbom);
+                        debug!("Inserting SBOM into the database: {:?}", sbom);
 
-                    let sbom_db_path = "./db/sbom.db";
-                    match init_sbom_db(sbom_db_path) {
-                        Ok(sbom_conn) => {
-                            if let Err(e) = insert_sbom(&sbom_conn, &sbom) {
-                                error!("Failed to insert SBOM into database: {}", e);
-                            }
+                        let sbom_db_conn = get_sbom_db_connection();
+                        let res = insert_sbom(&sbom_db_conn, &sbom);
+                        if res.is_err() {
+                            error!("Failed to insert SBOM into the database: {}", res.err().unwrap());
                         }
-                        Err(e) => {
-                            error!("Failed to initialize SBOM database: {}", e);
-                        }
-                    }
                 }
+
+                // Create Commitment
+                generate_commitment(sbom_path, vendor, product,version);
             }
             "xml" => {
                 if let Ok(contents) = read_file(sbom_path) {
@@ -66,6 +65,3 @@ fn read_file(sbom_path: &str) -> Result<String, std::io::Error> {
     file.read_to_string(&mut content)?;
     Ok(content)
 }
-
-
-// RUST_LOG=debug cargo run -- upload --sbom ./_demo-data/example.json --vendor example_vendor --product example_product --version 1.2

@@ -42,6 +42,13 @@ pub fn build_cli() -> Command {
             Command::new("get-commitment")
                 .about("Get the commitment for a product and version")
                 .arg(
+                    Arg::new("vendor")
+                        .long("vendor")
+                        .value_name("VENDOR")
+                        .help("Name of the vendor")
+                        .required(true),
+                )
+                .arg(
                     Arg::new("product")
                         .long("product")
                         .value_name("PRODUCT")
