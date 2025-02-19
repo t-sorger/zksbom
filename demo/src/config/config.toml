@@ -1,12 +1,12 @@
 [sbom_database]
-path = "./db/sbom.db"
+path = "./data/sbom.db"
 host = ""
 port = 0
 user = ""
 password = ""
 
 [commitment_database]
-path = "./db/commitment.db"
+path = "./data/commitment.db"
 host = ""
 port = 0
 user = ""
