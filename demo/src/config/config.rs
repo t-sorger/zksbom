@@ -28,4 +28,3 @@ pub fn load_config(path: &str) -> Result<Config, Box<dyn std::error::Error>> {
     let config: Config = toml::from_str(&contents)?;
     Ok(config)
 }
-
