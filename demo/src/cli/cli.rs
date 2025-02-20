@@ -91,13 +91,13 @@ pub fn build_cli() -> Command {
         .subcommand(
             Command::new("verify")
                 .about("Verify a ZK proof against a commitment")
-                .arg(
-                    Arg::new("commitment")
-                        .long("commitment")
-                        .value_name("COMMITMENT")
-                        .help("The commitment hash")
-                        .required(true),
-                )
+                // .arg(
+                //     Arg::new("commitment")
+                //         .long("commitment")
+                //         .value_name("COMMITMENT")
+                //         .help("The commitment hash")
+                //         .required(true),
+                // )
                 .arg(
                     Arg::new("zkproof")
                         .long("zkproof")
