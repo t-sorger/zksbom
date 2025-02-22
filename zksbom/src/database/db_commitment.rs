@@ -99,7 +99,12 @@ pub fn get_commitment(vendor: String, product: String, version: String) -> Commi
         Ok(commitment) => commitment,
         Err(e) => {
             error!("Error getting commitment from the database: {}", e);
-            panic!("Error getting commitment from the database: {}", e);
+            CommitmentDbEntry {
+                vendor: "".to_string(),
+                product: "".to_string(),
+                version: "".to_string(),
+                commitment: "".to_string(),
+            }
         }
     };
 

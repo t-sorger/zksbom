@@ -3,11 +3,11 @@
 ## Command Examples
 
 ```Bash
-cargo run -- upload_sbom --api-key 123 --sbom ./test/sbom/simple_example.json
+cargo run -- upload_sbom --api-key 123 --sbom ./test/sbom/example.cdx.json
 ```
 
 ```Bash
-cargo run -- get_commitment --vendor "My Vendor" --product "My Product" --version "My Verison"
+cargo run -- get_commitment --vendor "vendor" --product "product" --version "version"
 ```
 
 ```Bash

@@ -26,6 +26,7 @@ pub mod method{
     pub mod method_handler;
     pub mod merkle_tree;
 }
+use method::method_handler::get_commitment as mh_get_commitment;
 
 
 fn main() {
@@ -64,7 +65,7 @@ fn init_dbs() {
     init_db_commitment();
     init_db_sbom();
     init_db_vulnerability();
-    test_dbs();
+    // test_dbs();
 }
 
 fn parse_cli() {
@@ -77,14 +78,14 @@ fn parse_cli() {
             let sbom_path = sub_matches.get_one::<String>("sbom").unwrap();
             debug!("API Key: {}, SBOM Path: {}", api_key, sbom_path);
             upload(&api_key, &sbom_path);
-            // error!("Implement upload_sbom");
         }
         Some(("get_commitment", sub_matches)) => {
             let vendor = sub_matches.get_one::<String>("vendor").unwrap();
             let product = sub_matches.get_one::<String>("product").unwrap();
             let version = sub_matches.get_one::<String>("version").unwrap();
             debug!("Vendor: {}, Product: {}, Version: {}", vendor, product, version);
-            error!("Implement get_commitment");
+            let commitment = mh_get_commitment(&vendor, &product, &version);
+            println!("Commitment: {}", commitment);
         }
         Some(("get_zkp", sub_matches)) => {
             let api_key = sub_matches.get_one::<String>("api-key").unwrap();

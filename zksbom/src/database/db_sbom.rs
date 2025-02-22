@@ -99,7 +99,12 @@ pub fn get_sbom(vendor: String, product: String, version: String) -> SbomDbEntry
         Ok(sbom) => sbom,
         Err(e) => {
             error!("Error getting sbom from the database: {}", e);
-            panic!("Error getting sbom from the database: {}", e);
+            SbomDbEntry {
+                vendor: "".to_string(),
+                product: "".to_string(),
+                version: "".to_string(),
+                sbom: "".to_string(),
+            }
         }
     };
 

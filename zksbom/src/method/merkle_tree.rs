@@ -25,7 +25,7 @@ pub fn create_commitment(vulnerabilities: Vec<&str>) -> MerkleRootLeaves {
 
      return MerkleRootLeaves {
          root: root.to_string(),
-         leaves: vulnerabilities.iter().map(|v| v.to_string()).collect(),
+         leaves: hashed_leaves.iter().map(|v| v.to_string()).collect(),
      };
 }
 
