@@ -1,4 +1,4 @@
-use log::{debug, info, warn, error, LevelFilter};
+use log::{debug, info, error, LevelFilter};
 use std::str::FromStr;
 
 pub mod config;
@@ -7,14 +7,26 @@ use config::load_config;
 mod database{
     pub mod db_commitment;
     pub mod db_sbom;
+    pub mod db_vulnerability;
 }
 use database::{
     db_commitment::{CommitmentDbEntry, init_db_commitment, insert_commitment, get_commitment, delete_db_commitment},
     db_sbom::{SbomDbEntry, init_db_sbom, insert_sbom, get_sbom, delete_db_sbom},
+    db_vulnerability::{VulnerabilityDbEntry, init_db_vulnerability, insert_vulnerability, get_vulnerabilities, delete_db_vulnerability},
 };
 
 pub mod cli;
 use cli::build_cli;
+
+pub mod upload;
+use upload::upload;
+
+
+pub mod method{
+    pub mod method_handler;
+    pub mod merkle_tree;
+}
+
 
 fn main() {
     init_logger();
@@ -25,11 +37,6 @@ fn main() {
 
     debug!("Parse cli...");
     parse_cli();
-
-
-    info!("test");
-    warn!("test");
-    error!("test");
 }
 
 fn init_logger() {
@@ -52,9 +59,11 @@ fn init_dbs() {
     // TODO: Remove delete
     delete_db_commitment();
     delete_db_sbom();
+    delete_db_vulnerability();
 
     init_db_commitment();
     init_db_sbom();
+    init_db_vulnerability();
     test_dbs();
 }
 
@@ -67,7 +76,8 @@ fn parse_cli() {
             let api_key = sub_matches.get_one::<String>("api-key").unwrap();
             let sbom_path = sub_matches.get_one::<String>("sbom").unwrap();
             debug!("API Key: {}, SBOM Path: {}", api_key, sbom_path);
-            error!("Implement upload_sbom");
+            upload(&api_key, &sbom_path);
+            // error!("Implement upload_sbom");
         }
         Some(("get_commitment", sub_matches)) => {
             let vendor = sub_matches.get_one::<String>("vendor").unwrap();
@@ -119,4 +129,12 @@ fn test_dbs() {
     });
     let sbom = get_sbom("vendor".to_string(), "product".to_string(), "version".to_string());
     debug!("{:?}", sbom);
+
+    // Test vulnerability database
+    insert_vulnerability(VulnerabilityDbEntry {
+        vulnerabilities: "vulnerabilities".to_string(),
+        commitment: "commitment".to_string(),
+    });
+    let vulnerability = get_vulnerabilities("commitment".to_string());
+    debug!("{:?}", vulnerability);
 }

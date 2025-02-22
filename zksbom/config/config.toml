@@ -6,3 +6,6 @@ path = "./tmp/database/commitment.db"
 
 [db_sbom]
 path = "./tmp/database/sbom.db"
+
+[db_vulnerability]
+path = "./tmp/database/vulnerability.db"
